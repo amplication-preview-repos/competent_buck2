@@ -11,13 +11,29 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringNullableFilter } from "../../util/StringNullableFilter";
+import { BadgeListRelationFilter } from "../../badge/base/BadgeListRelationFilter";
+import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { StringFilter } from "../../util/StringFilter";
+import { LeaderboardListRelationFilter } from "../../leaderboard/base/LeaderboardListRelationFilter";
+import { TransactionListRelationFilter } from "../../transaction/base/TransactionListRelationFilter";
+import { UserFriendListRelationFilter } from "../../userFriend/base/UserFriendListRelationFilter";
 
 @InputType()
 class UserWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => BadgeListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => BadgeListRelationFilter)
+  @IsOptional()
+  @Field(() => BadgeListRelationFilter, {
+    nullable: true,
+  })
+  badges?: BadgeListRelationFilter;
+
   @ApiProperty({
     required: false,
     type: StringNullableFilter,
@@ -61,6 +77,42 @@ class UserWhereInput {
     nullable: true,
   })
   lastName?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => LeaderboardListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => LeaderboardListRelationFilter)
+  @IsOptional()
+  @Field(() => LeaderboardListRelationFilter, {
+    nullable: true,
+  })
+  leaderboards?: LeaderboardListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => TransactionListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => TransactionListRelationFilter)
+  @IsOptional()
+  @Field(() => TransactionListRelationFilter, {
+    nullable: true,
+  })
+  transactions?: TransactionListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserFriendListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => UserFriendListRelationFilter)
+  @IsOptional()
+  @Field(() => UserFriendListRelationFilter, {
+    nullable: true,
+  })
+  userFriends?: UserFriendListRelationFilter;
 
   @ApiProperty({
     required: false,

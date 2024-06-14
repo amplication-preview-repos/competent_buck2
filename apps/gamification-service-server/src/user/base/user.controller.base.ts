@@ -22,6 +22,18 @@ import { User } from "./User";
 import { UserFindManyArgs } from "./UserFindManyArgs";
 import { UserWhereUniqueInput } from "./UserWhereUniqueInput";
 import { UserUpdateInput } from "./UserUpdateInput";
+import { BadgeFindManyArgs } from "../../badge/base/BadgeFindManyArgs";
+import { Badge } from "../../badge/base/Badge";
+import { BadgeWhereUniqueInput } from "../../badge/base/BadgeWhereUniqueInput";
+import { LeaderboardFindManyArgs } from "../../leaderboard/base/LeaderboardFindManyArgs";
+import { Leaderboard } from "../../leaderboard/base/Leaderboard";
+import { LeaderboardWhereUniqueInput } from "../../leaderboard/base/LeaderboardWhereUniqueInput";
+import { TransactionFindManyArgs } from "../../transaction/base/TransactionFindManyArgs";
+import { Transaction } from "../../transaction/base/Transaction";
+import { TransactionWhereUniqueInput } from "../../transaction/base/TransactionWhereUniqueInput";
+import { UserFriendFindManyArgs } from "../../userFriend/base/UserFriendFindManyArgs";
+import { UserFriend } from "../../userFriend/base/UserFriend";
+import { UserFriendWhereUniqueInput } from "../../userFriend/base/UserFriendWhereUniqueInput";
 
 export class UserControllerBase {
   constructor(protected readonly service: UserService) {}
@@ -150,5 +162,345 @@ export class UserControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/badges")
+  @ApiNestedQuery(BadgeFindManyArgs)
+  async findBadges(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<Badge[]> {
+    const query = plainToClass(BadgeFindManyArgs, request.query);
+    const results = await this.service.findBadges(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        description: true,
+        icon: true,
+        id: true,
+        level: true,
+        name: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/badges")
+  async connectBadges(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/badges")
+  async updateBadges(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/badges")
+  async disconnectBadges(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/leaderboards")
+  @ApiNestedQuery(LeaderboardFindManyArgs)
+  async findLeaderboards(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<Leaderboard[]> {
+    const query = plainToClass(LeaderboardFindManyArgs, request.query);
+    const results = await this.service.findLeaderboards(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+        score: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/leaderboards")
+  async connectLeaderboards(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: LeaderboardWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      leaderboards: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/leaderboards")
+  async updateLeaderboards(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: LeaderboardWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      leaderboards: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/leaderboards")
+  async disconnectLeaderboards(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: LeaderboardWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      leaderboards: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/transactions")
+  @ApiNestedQuery(TransactionFindManyArgs)
+  async findTransactions(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<Transaction[]> {
+    const query = plainToClass(TransactionFindManyArgs, request.query);
+    const results = await this.service.findTransactions(params.id, {
+      ...query,
+      select: {
+        amount: true,
+        createdAt: true,
+        date: true,
+        id: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/transactions")
+  async connectTransactions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/transactions")
+  async updateTransactions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/transactions")
+  async disconnectTransactions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/userFriends")
+  @ApiNestedQuery(UserFriendFindManyArgs)
+  async findUserFriends(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<UserFriend[]> {
+    const query = plainToClass(UserFriendFindManyArgs, request.query);
+    const results = await this.service.findUserFriends(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        friend: true,
+        id: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/userFriends")
+  async connectUserFriends(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: UserFriendWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      userFriends: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/userFriends")
+  async updateUserFriends(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: UserFriendWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      userFriends: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/userFriends")
+  async disconnectUserFriends(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: UserFriendWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      userFriends: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

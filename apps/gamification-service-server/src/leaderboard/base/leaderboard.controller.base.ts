@@ -31,11 +31,26 @@ export class LeaderboardControllerBase {
     @common.Body() data: LeaderboardCreateInput
   ): Promise<Leaderboard> {
     return await this.service.createLeaderboard({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
+        score: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -50,7 +65,14 @@ export class LeaderboardControllerBase {
       select: {
         createdAt: true,
         id: true,
+        score: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -66,7 +88,14 @@ export class LeaderboardControllerBase {
       select: {
         createdAt: true,
         id: true,
+        score: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -87,11 +116,26 @@ export class LeaderboardControllerBase {
     try {
       return await this.service.updateLeaderboard({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
+          score: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -116,7 +160,14 @@ export class LeaderboardControllerBase {
         select: {
           createdAt: true,
           id: true,
+          score: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

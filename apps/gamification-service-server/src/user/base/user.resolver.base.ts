@@ -20,6 +20,14 @@ import { UserFindUniqueArgs } from "./UserFindUniqueArgs";
 import { CreateUserArgs } from "./CreateUserArgs";
 import { UpdateUserArgs } from "./UpdateUserArgs";
 import { DeleteUserArgs } from "./DeleteUserArgs";
+import { BadgeFindManyArgs } from "../../badge/base/BadgeFindManyArgs";
+import { Badge } from "../../badge/base/Badge";
+import { LeaderboardFindManyArgs } from "../../leaderboard/base/LeaderboardFindManyArgs";
+import { Leaderboard } from "../../leaderboard/base/Leaderboard";
+import { TransactionFindManyArgs } from "../../transaction/base/TransactionFindManyArgs";
+import { Transaction } from "../../transaction/base/Transaction";
+import { UserFriendFindManyArgs } from "../../userFriend/base/UserFriendFindManyArgs";
+import { UserFriend } from "../../userFriend/base/UserFriend";
 import { UserService } from "../user.service";
 @graphql.Resolver(() => User)
 export class UserResolverBase {
@@ -85,5 +93,61 @@ export class UserResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Badge], { name: "badges" })
+  async findBadges(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: BadgeFindManyArgs
+  ): Promise<Badge[]> {
+    const results = await this.service.findBadges(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [Leaderboard], { name: "leaderboards" })
+  async findLeaderboards(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: LeaderboardFindManyArgs
+  ): Promise<Leaderboard[]> {
+    const results = await this.service.findLeaderboards(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [Transaction], { name: "transactions" })
+  async findTransactions(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: TransactionFindManyArgs
+  ): Promise<Transaction[]> {
+    const results = await this.service.findTransactions(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [UserFriend], { name: "userFriends" })
+  async findUserFriends(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: UserFriendFindManyArgs
+  ): Promise<UserFriend[]> {
+    const results = await this.service.findUserFriends(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

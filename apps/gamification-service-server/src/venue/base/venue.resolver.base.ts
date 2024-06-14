@@ -17,7 +17,13 @@ import { Venue } from "./Venue";
 import { VenueCountArgs } from "./VenueCountArgs";
 import { VenueFindManyArgs } from "./VenueFindManyArgs";
 import { VenueFindUniqueArgs } from "./VenueFindUniqueArgs";
+import { CreateVenueArgs } from "./CreateVenueArgs";
+import { UpdateVenueArgs } from "./UpdateVenueArgs";
 import { DeleteVenueArgs } from "./DeleteVenueArgs";
+import { BadgeFindManyArgs } from "../../badge/base/BadgeFindManyArgs";
+import { Badge } from "../../badge/base/Badge";
+import { TransactionFindManyArgs } from "../../transaction/base/TransactionFindManyArgs";
+import { Transaction } from "../../transaction/base/Transaction";
 import { VenueService } from "../venue.service";
 @graphql.Resolver(() => Venue)
 export class VenueResolverBase {
@@ -49,6 +55,33 @@ export class VenueResolverBase {
   }
 
   @graphql.Mutation(() => Venue)
+  async createVenue(@graphql.Args() args: CreateVenueArgs): Promise<Venue> {
+    return await this.service.createVenue({
+      ...args,
+      data: args.data,
+    });
+  }
+
+  @graphql.Mutation(() => Venue)
+  async updateVenue(
+    @graphql.Args() args: UpdateVenueArgs
+  ): Promise<Venue | null> {
+    try {
+      return await this.service.updateVenue({
+        ...args,
+        data: args.data,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Venue)
   async deleteVenue(
     @graphql.Args() args: DeleteVenueArgs
   ): Promise<Venue | null> {
@@ -62,5 +95,33 @@ export class VenueResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Badge], { name: "badges" })
+  async findBadges(
+    @graphql.Parent() parent: Venue,
+    @graphql.Args() args: BadgeFindManyArgs
+  ): Promise<Badge[]> {
+    const results = await this.service.findBadges(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [Transaction], { name: "transactions" })
+  async findTransactions(
+    @graphql.Parent() parent: Venue,
+    @graphql.Args() args: TransactionFindManyArgs
+  ): Promise<Transaction[]> {
+    const results = await this.service.findTransactions(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

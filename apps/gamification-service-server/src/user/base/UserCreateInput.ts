@@ -11,13 +11,30 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional } from "class-validator";
+import { BadgeCreateNestedManyWithoutUsersInput } from "./BadgeCreateNestedManyWithoutUsersInput";
+import { ValidateNested, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { LeaderboardCreateNestedManyWithoutUsersInput } from "./LeaderboardCreateNestedManyWithoutUsersInput";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { TransactionCreateNestedManyWithoutUsersInput } from "./TransactionCreateNestedManyWithoutUsersInput";
+import { UserFriendCreateNestedManyWithoutUsersInput } from "./UserFriendCreateNestedManyWithoutUsersInput";
 
 @InputType()
 class UserCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => BadgeCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => BadgeCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => BadgeCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  badges?: BadgeCreateNestedManyWithoutUsersInput;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -52,6 +69,18 @@ class UserCreateInput {
   lastName?: string | null;
 
   @ApiProperty({
+    required: false,
+    type: () => LeaderboardCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => LeaderboardCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => LeaderboardCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  leaderboards?: LeaderboardCreateNestedManyWithoutUsersInput;
+
+  @ApiProperty({
     required: true,
     type: String,
   })
@@ -65,6 +94,30 @@ class UserCreateInput {
   @IsJSONValue()
   @Field(() => GraphQLJSON)
   roles!: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => TransactionCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => TransactionCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => TransactionCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  transactions?: TransactionCreateNestedManyWithoutUsersInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserFriendCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => UserFriendCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => UserFriendCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  userFriends?: UserFriendCreateNestedManyWithoutUsersInput;
 
   @ApiProperty({
     required: true,

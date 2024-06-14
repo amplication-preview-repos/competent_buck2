@@ -10,7 +10,15 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, User as PrismaUser } from "@prisma/client";
+
+import {
+  Prisma,
+  User as PrismaUser,
+  Badge as PrismaBadge,
+  Leaderboard as PrismaLeaderboard,
+  Transaction as PrismaTransaction,
+  UserFriend as PrismaUserFriend,
+} from "@prisma/client";
 
 export class UserServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -43,5 +51,49 @@ export class UserServiceBase {
     args: Prisma.SelectSubset<T, Prisma.UserDeleteArgs>
   ): Promise<PrismaUser> {
     return this.prisma.user.delete(args);
+  }
+
+  async findBadges(
+    parentId: string,
+    args: Prisma.BadgeFindManyArgs
+  ): Promise<PrismaBadge[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .badges(args);
+  }
+
+  async findLeaderboards(
+    parentId: string,
+    args: Prisma.LeaderboardFindManyArgs
+  ): Promise<PrismaLeaderboard[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .leaderboards(args);
+  }
+
+  async findTransactions(
+    parentId: string,
+    args: Prisma.TransactionFindManyArgs
+  ): Promise<PrismaTransaction[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .transactions(args);
+  }
+
+  async findUserFriends(
+    parentId: string,
+    args: Prisma.UserFriendFindManyArgs
+  ): Promise<PrismaUserFriend[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .userFriends(args);
   }
 }

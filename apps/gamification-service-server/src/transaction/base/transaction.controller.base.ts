@@ -31,11 +31,39 @@ export class TransactionControllerBase {
     @common.Body() data: TransactionCreateInput
   ): Promise<Transaction> {
     return await this.service.createTransaction({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+
+        venue: data.venue
+          ? {
+              connect: data.venue,
+            }
+          : undefined,
+      },
       select: {
+        amount: true,
         createdAt: true,
+        date: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -48,9 +76,23 @@ export class TransactionControllerBase {
     return this.service.transactions({
       ...args,
       select: {
+        amount: true,
         createdAt: true,
+        date: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -64,9 +106,23 @@ export class TransactionControllerBase {
     const result = await this.service.transaction({
       where: params,
       select: {
+        amount: true,
         createdAt: true,
+        date: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -87,11 +143,39 @@ export class TransactionControllerBase {
     try {
       return await this.service.updateTransaction({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+
+          venue: data.venue
+            ? {
+                connect: data.venue,
+              }
+            : undefined,
+        },
         select: {
+          amount: true,
           createdAt: true,
+          date: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
+
+          venue: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -114,9 +198,23 @@ export class TransactionControllerBase {
       return await this.service.deleteTransaction({
         where: params,
         select: {
+          amount: true,
           createdAt: true,
+          date: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
+
+          venue: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

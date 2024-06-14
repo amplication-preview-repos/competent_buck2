@@ -11,14 +11,27 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString, IsOptional } from "class-validator";
+import { Badge } from "../../badge/base/Badge";
+import { ValidateNested, IsOptional, IsDate, IsString } from "class-validator";
 import { Type } from "class-transformer";
+import { Leaderboard } from "../../leaderboard/base/Leaderboard";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
+import { Transaction } from "../../transaction/base/Transaction";
+import { UserFriend } from "../../userFriend/base/UserFriend";
 
 @ObjectType()
 class User {
+  @ApiProperty({
+    required: false,
+    type: () => [Badge],
+  })
+  @ValidateNested()
+  @Type(() => Badge)
+  @IsOptional()
+  badges?: Array<Badge>;
+
   @ApiProperty({
     required: true,
   })
@@ -69,11 +82,29 @@ class User {
   lastName!: string | null;
 
   @ApiProperty({
+    required: false,
+    type: () => [Leaderboard],
+  })
+  @ValidateNested()
+  @Type(() => Leaderboard)
+  @IsOptional()
+  leaderboards?: Array<Leaderboard>;
+
+  @ApiProperty({
     required: true,
   })
   @IsJSONValue()
   @Field(() => GraphQLJSON)
   roles!: JsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Transaction],
+  })
+  @ValidateNested()
+  @Type(() => Transaction)
+  @IsOptional()
+  transactions?: Array<Transaction>;
 
   @ApiProperty({
     required: true,
@@ -82,6 +113,15 @@ class User {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => [UserFriend],
+  })
+  @ValidateNested()
+  @Type(() => UserFriend)
+  @IsOptional()
+  userFriends?: Array<UserFriend>;
 
   @ApiProperty({
     required: true,

@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Leaderboard as PrismaLeaderboard } from "@prisma/client";
+import {
+  Prisma,
+  Leaderboard as PrismaLeaderboard,
+  User as PrismaUser,
+} from "@prisma/client";
 
 export class LeaderboardServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -47,5 +51,13 @@ export class LeaderboardServiceBase {
     args: Prisma.SelectSubset<T, Prisma.LeaderboardDeleteArgs>
   ): Promise<PrismaLeaderboard> {
     return this.prisma.leaderboard.delete(args);
+  }
+
+  async getUser(parentId: string): Promise<PrismaUser | null> {
+    return this.prisma.leaderboard
+      .findUnique({
+        where: { id: parentId },
+      })
+      .user();
   }
 }

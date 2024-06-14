@@ -22,6 +22,12 @@ import { Venue } from "./Venue";
 import { VenueFindManyArgs } from "./VenueFindManyArgs";
 import { VenueWhereUniqueInput } from "./VenueWhereUniqueInput";
 import { VenueUpdateInput } from "./VenueUpdateInput";
+import { BadgeFindManyArgs } from "../../badge/base/BadgeFindManyArgs";
+import { Badge } from "../../badge/base/Badge";
+import { BadgeWhereUniqueInput } from "../../badge/base/BadgeWhereUniqueInput";
+import { TransactionFindManyArgs } from "../../transaction/base/TransactionFindManyArgs";
+import { Transaction } from "../../transaction/base/Transaction";
+import { TransactionWhereUniqueInput } from "../../transaction/base/TransactionWhereUniqueInput";
 
 export class VenueControllerBase {
   constructor(protected readonly service: VenueService) {}
@@ -33,6 +39,9 @@ export class VenueControllerBase {
       select: {
         createdAt: true,
         id: true,
+        location: true,
+        name: true,
+        typeField: true,
         updatedAt: true,
       },
     });
@@ -48,6 +57,9 @@ export class VenueControllerBase {
       select: {
         createdAt: true,
         id: true,
+        location: true,
+        name: true,
+        typeField: true,
         updatedAt: true,
       },
     });
@@ -64,6 +76,9 @@ export class VenueControllerBase {
       select: {
         createdAt: true,
         id: true,
+        location: true,
+        name: true,
+        typeField: true,
         updatedAt: true,
       },
     });
@@ -89,6 +104,9 @@ export class VenueControllerBase {
         select: {
           createdAt: true,
           id: true,
+          location: true,
+          name: true,
+          typeField: true,
           updatedAt: true,
         },
       });
@@ -114,6 +132,9 @@ export class VenueControllerBase {
         select: {
           createdAt: true,
           id: true,
+          location: true,
+          name: true,
+          typeField: true,
           updatedAt: true,
         },
       });
@@ -125,5 +146,183 @@ export class VenueControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/badges")
+  @ApiNestedQuery(BadgeFindManyArgs)
+  async findBadges(
+    @common.Req() request: Request,
+    @common.Param() params: VenueWhereUniqueInput
+  ): Promise<Badge[]> {
+    const query = plainToClass(BadgeFindManyArgs, request.query);
+    const results = await this.service.findBadges(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        description: true,
+        icon: true,
+        id: true,
+        level: true,
+        name: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/badges")
+  async connectBadges(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        connect: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/badges")
+  async updateBadges(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        set: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/badges")
+  async disconnectBadges(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: BadgeWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      badges: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/transactions")
+  @ApiNestedQuery(TransactionFindManyArgs)
+  async findTransactions(
+    @common.Req() request: Request,
+    @common.Param() params: VenueWhereUniqueInput
+  ): Promise<Transaction[]> {
+    const query = plainToClass(TransactionFindManyArgs, request.query);
+    const results = await this.service.findTransactions(params.id, {
+      ...query,
+      select: {
+        amount: true,
+        createdAt: true,
+        date: true,
+        id: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/transactions")
+  async connectTransactions(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        connect: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/transactions")
+  async updateTransactions(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        set: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/transactions")
+  async disconnectTransactions(
+    @common.Param() params: VenueWhereUniqueInput,
+    @common.Body() body: TransactionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      transactions: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateVenue({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

@@ -14,6 +14,9 @@ export const VenueList = (props: ListProps): React.ReactElement => {
       <Datagrid rowClick="show">
         <DateField source="createdAt" label="Created At" />
         <TextField label="ID" source="id" />
+        <TextField label="location" source="location" />
+        <TextField label="name" source="name" />
+        <TextField label="type" source="typeField" />
         <DateField source="updatedAt" label="Updated At" />
       </Datagrid>
     </List>

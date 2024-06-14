@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
-import { BadgeModule } from "./badge/badge.module";
 import { TransactionModule } from "./transaction/transaction.module";
+import { BadgeModule } from "./badge/badge.module";
 import { VenueModule } from "./venue/venue.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { UserModule } from "./user/user.module";
+import { UserFriendModule } from "./userFriend/userFriend.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -16,11 +17,12 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 @Module({
   controllers: [],
   imports: [
-    BadgeModule,
     TransactionModule,
+    BadgeModule,
     VenueModule,
     LeaderboardModule,
     UserModule,
+    UserFriendModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

@@ -9,5 +9,72 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class VenueCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { BadgeCreateNestedManyWithoutVenuesInput } from "./BadgeCreateNestedManyWithoutVenuesInput";
+import { ValidateNested, IsOptional, IsString, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { TransactionCreateNestedManyWithoutVenuesInput } from "./TransactionCreateNestedManyWithoutVenuesInput";
+import { EnumVenueTypeField } from "./EnumVenueTypeField";
+
+@InputType()
+class VenueCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => BadgeCreateNestedManyWithoutVenuesInput,
+  })
+  @ValidateNested()
+  @Type(() => BadgeCreateNestedManyWithoutVenuesInput)
+  @IsOptional()
+  @Field(() => BadgeCreateNestedManyWithoutVenuesInput, {
+    nullable: true,
+  })
+  badges?: BadgeCreateNestedManyWithoutVenuesInput;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  location?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => TransactionCreateNestedManyWithoutVenuesInput,
+  })
+  @ValidateNested()
+  @Type(() => TransactionCreateNestedManyWithoutVenuesInput)
+  @IsOptional()
+  @Field(() => TransactionCreateNestedManyWithoutVenuesInput, {
+    nullable: true,
+  })
+  transactions?: TransactionCreateNestedManyWithoutVenuesInput;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVenueTypeField,
+  })
+  @IsEnum(EnumVenueTypeField)
+  @IsOptional()
+  @Field(() => EnumVenueTypeField, {
+    nullable: true,
+  })
+  typeField?: "Option1" | null;
+}
+
 export { VenueCreateInput as VenueCreateInput };

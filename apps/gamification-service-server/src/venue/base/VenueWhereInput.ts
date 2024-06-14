@@ -11,12 +11,28 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringFilter } from "../../util/StringFilter";
+import { BadgeListRelationFilter } from "../../badge/base/BadgeListRelationFilter";
+import { ValidateNested, IsOptional, IsEnum } from "class-validator";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { StringFilter } from "../../util/StringFilter";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
+import { TransactionListRelationFilter } from "../../transaction/base/TransactionListRelationFilter";
+import { EnumVenueTypeField } from "./EnumVenueTypeField";
 
 @InputType()
 class VenueWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => BadgeListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => BadgeListRelationFilter)
+  @IsOptional()
+  @Field(() => BadgeListRelationFilter, {
+    nullable: true,
+  })
+  badges?: BadgeListRelationFilter;
+
   @ApiProperty({
     required: false,
     type: StringFilter,
@@ -27,6 +43,51 @@ class VenueWhereInput {
     nullable: true,
   })
   id?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
+  location?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
+  name?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => TransactionListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => TransactionListRelationFilter)
+  @IsOptional()
+  @Field(() => TransactionListRelationFilter, {
+    nullable: true,
+  })
+  transactions?: TransactionListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVenueTypeField,
+  })
+  @IsEnum(EnumVenueTypeField)
+  @IsOptional()
+  @Field(() => EnumVenueTypeField, {
+    nullable: true,
+  })
+  typeField?: "Option1";
 }
 
 export { VenueWhereInput as VenueWhereInput };

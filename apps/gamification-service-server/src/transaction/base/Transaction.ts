@@ -11,11 +11,30 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import {
+  IsNumber,
+  IsOptional,
+  IsDate,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 import { Type } from "class-transformer";
+import { User } from "../../user/base/User";
+import { Venue } from "../../venue/base/Venue";
 
 @ObjectType()
 class Transaction {
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  amount!: number | null;
+
   @ApiProperty({
     required: true,
   })
@@ -23,6 +42,17 @@ class Transaction {
   @Type(() => Date)
   @Field(() => Date)
   createdAt!: Date;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  @Field(() => Date, {
+    nullable: true,
+  })
+  date!: Date | null;
 
   @ApiProperty({
     required: true,
@@ -39,6 +69,24 @@ class Transaction {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => User,
+  })
+  @ValidateNested()
+  @Type(() => User)
+  @IsOptional()
+  user?: User | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => Venue,
+  })
+  @ValidateNested()
+  @Type(() => Venue)
+  @IsOptional()
+  venue?: Venue | null;
 }
 
 export { Transaction as Transaction };

@@ -9,5 +9,60 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class TransactionUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsOptional, IsDate, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
+import { VenueWhereUniqueInput } from "../../venue/base/VenueWhereUniqueInput";
+
+@InputType()
+class TransactionUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  amount?: number | null;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  @Field(() => Date, {
+    nullable: true,
+  })
+  date?: Date | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => VenueWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => VenueWhereUniqueInput)
+  @IsOptional()
+  @Field(() => VenueWhereUniqueInput, {
+    nullable: true,
+  })
+  venue?: VenueWhereUniqueInput | null;
+}
+
 export { TransactionUpdateInput as TransactionUpdateInput };

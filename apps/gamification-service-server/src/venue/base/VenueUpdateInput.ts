@@ -9,5 +9,72 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class VenueUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { BadgeUpdateManyWithoutVenuesInput } from "./BadgeUpdateManyWithoutVenuesInput";
+import { ValidateNested, IsOptional, IsString, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { TransactionUpdateManyWithoutVenuesInput } from "./TransactionUpdateManyWithoutVenuesInput";
+import { EnumVenueTypeField } from "./EnumVenueTypeField";
+
+@InputType()
+class VenueUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => BadgeUpdateManyWithoutVenuesInput,
+  })
+  @ValidateNested()
+  @Type(() => BadgeUpdateManyWithoutVenuesInput)
+  @IsOptional()
+  @Field(() => BadgeUpdateManyWithoutVenuesInput, {
+    nullable: true,
+  })
+  badges?: BadgeUpdateManyWithoutVenuesInput;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  location?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => TransactionUpdateManyWithoutVenuesInput,
+  })
+  @ValidateNested()
+  @Type(() => TransactionUpdateManyWithoutVenuesInput)
+  @IsOptional()
+  @Field(() => TransactionUpdateManyWithoutVenuesInput, {
+    nullable: true,
+  })
+  transactions?: TransactionUpdateManyWithoutVenuesInput;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVenueTypeField,
+  })
+  @IsEnum(EnumVenueTypeField)
+  @IsOptional()
+  @Field(() => EnumVenueTypeField, {
+    nullable: true,
+  })
+  typeField?: "Option1" | null;
+}
+
 export { VenueUpdateInput as VenueUpdateInput };

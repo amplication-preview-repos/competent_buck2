@@ -17,7 +17,11 @@ import { Badge } from "./Badge";
 import { BadgeCountArgs } from "./BadgeCountArgs";
 import { BadgeFindManyArgs } from "./BadgeFindManyArgs";
 import { BadgeFindUniqueArgs } from "./BadgeFindUniqueArgs";
+import { CreateBadgeArgs } from "./CreateBadgeArgs";
+import { UpdateBadgeArgs } from "./UpdateBadgeArgs";
 import { DeleteBadgeArgs } from "./DeleteBadgeArgs";
+import { User } from "../../user/base/User";
+import { Venue } from "../../venue/base/Venue";
 import { BadgeService } from "../badge.service";
 @graphql.Resolver(() => Badge)
 export class BadgeResolverBase {
@@ -49,6 +53,61 @@ export class BadgeResolverBase {
   }
 
   @graphql.Mutation(() => Badge)
+  async createBadge(@graphql.Args() args: CreateBadgeArgs): Promise<Badge> {
+    return await this.service.createBadge({
+      ...args,
+      data: {
+        ...args.data,
+
+        user: args.data.user
+          ? {
+              connect: args.data.user,
+            }
+          : undefined,
+
+        venue: args.data.venue
+          ? {
+              connect: args.data.venue,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Badge)
+  async updateBadge(
+    @graphql.Args() args: UpdateBadgeArgs
+  ): Promise<Badge | null> {
+    try {
+      return await this.service.updateBadge({
+        ...args,
+        data: {
+          ...args.data,
+
+          user: args.data.user
+            ? {
+                connect: args.data.user,
+              }
+            : undefined,
+
+          venue: args.data.venue
+            ? {
+                connect: args.data.venue,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Badge)
   async deleteBadge(
     @graphql.Args() args: DeleteBadgeArgs
   ): Promise<Badge | null> {
@@ -62,5 +121,31 @@ export class BadgeResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => User, {
+    nullable: true,
+    name: "user",
+  })
+  async getUser(@graphql.Parent() parent: Badge): Promise<User | null> {
+    const result = await this.service.getUser(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  @graphql.ResolveField(() => Venue, {
+    nullable: true,
+    name: "venue",
+  })
+  async getVenue(@graphql.Parent() parent: Badge): Promise<Venue | null> {
+    const result = await this.service.getVenue(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

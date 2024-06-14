@@ -17,7 +17,10 @@ import { Leaderboard } from "./Leaderboard";
 import { LeaderboardCountArgs } from "./LeaderboardCountArgs";
 import { LeaderboardFindManyArgs } from "./LeaderboardFindManyArgs";
 import { LeaderboardFindUniqueArgs } from "./LeaderboardFindUniqueArgs";
+import { CreateLeaderboardArgs } from "./CreateLeaderboardArgs";
+import { UpdateLeaderboardArgs } from "./UpdateLeaderboardArgs";
 import { DeleteLeaderboardArgs } from "./DeleteLeaderboardArgs";
+import { User } from "../../user/base/User";
 import { LeaderboardService } from "../leaderboard.service";
 @graphql.Resolver(() => Leaderboard)
 export class LeaderboardResolverBase {
@@ -51,6 +54,51 @@ export class LeaderboardResolverBase {
   }
 
   @graphql.Mutation(() => Leaderboard)
+  async createLeaderboard(
+    @graphql.Args() args: CreateLeaderboardArgs
+  ): Promise<Leaderboard> {
+    return await this.service.createLeaderboard({
+      ...args,
+      data: {
+        ...args.data,
+
+        user: args.data.user
+          ? {
+              connect: args.data.user,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Leaderboard)
+  async updateLeaderboard(
+    @graphql.Args() args: UpdateLeaderboardArgs
+  ): Promise<Leaderboard | null> {
+    try {
+      return await this.service.updateLeaderboard({
+        ...args,
+        data: {
+          ...args.data,
+
+          user: args.data.user
+            ? {
+                connect: args.data.user,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Leaderboard)
   async deleteLeaderboard(
     @graphql.Args() args: DeleteLeaderboardArgs
   ): Promise<Leaderboard | null> {
@@ -64,5 +112,18 @@ export class LeaderboardResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => User, {
+    nullable: true,
+    name: "user",
+  })
+  async getUser(@graphql.Parent() parent: Leaderboard): Promise<User | null> {
+    const result = await this.service.getUser(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

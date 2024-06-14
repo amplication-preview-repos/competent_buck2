@@ -10,7 +10,13 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Venue as PrismaVenue } from "@prisma/client";
+
+import {
+  Prisma,
+  Venue as PrismaVenue,
+  Badge as PrismaBadge,
+  Transaction as PrismaTransaction,
+} from "@prisma/client";
 
 export class VenueServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -43,5 +49,27 @@ export class VenueServiceBase {
     args: Prisma.SelectSubset<T, Prisma.VenueDeleteArgs>
   ): Promise<PrismaVenue> {
     return this.prisma.venue.delete(args);
+  }
+
+  async findBadges(
+    parentId: string,
+    args: Prisma.BadgeFindManyArgs
+  ): Promise<PrismaBadge[]> {
+    return this.prisma.venue
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .badges(args);
+  }
+
+  async findTransactions(
+    parentId: string,
+    args: Prisma.TransactionFindManyArgs
+  ): Promise<PrismaTransaction[]> {
+    return this.prisma.venue
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .transactions(args);
   }
 }

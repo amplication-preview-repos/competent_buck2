@@ -5,14 +5,14 @@ import { theme } from "./theme/theme";
 import Login from "./Login";
 import "./App.scss";
 import Dashboard from "./pages/Dashboard";
-import { BadgeList } from "./badge/BadgeList";
-import { BadgeCreate } from "./badge/BadgeCreate";
-import { BadgeEdit } from "./badge/BadgeEdit";
-import { BadgeShow } from "./badge/BadgeShow";
 import { TransactionList } from "./transaction/TransactionList";
 import { TransactionCreate } from "./transaction/TransactionCreate";
 import { TransactionEdit } from "./transaction/TransactionEdit";
 import { TransactionShow } from "./transaction/TransactionShow";
+import { BadgeList } from "./badge/BadgeList";
+import { BadgeCreate } from "./badge/BadgeCreate";
+import { BadgeEdit } from "./badge/BadgeEdit";
+import { BadgeShow } from "./badge/BadgeShow";
 import { VenueList } from "./venue/VenueList";
 import { VenueCreate } from "./venue/VenueCreate";
 import { VenueEdit } from "./venue/VenueEdit";
@@ -25,6 +25,10 @@ import { UserList } from "./user/UserList";
 import { UserCreate } from "./user/UserCreate";
 import { UserEdit } from "./user/UserEdit";
 import { UserShow } from "./user/UserShow";
+import { UserFriendList } from "./userFriend/UserFriendList";
+import { UserFriendCreate } from "./userFriend/UserFriendCreate";
+import { UserFriendEdit } from "./userFriend/UserFriendEdit";
+import { UserFriendShow } from "./userFriend/UserFriendShow";
 import { jwtAuthProvider } from "./auth-provider/ra-auth-jwt";
 
 const App = (): React.ReactElement => {
@@ -52,18 +56,18 @@ const App = (): React.ReactElement => {
         loginPage={Login}
       >
         <Resource
-          name="Badge"
-          list={BadgeList}
-          edit={BadgeEdit}
-          create={BadgeCreate}
-          show={BadgeShow}
-        />
-        <Resource
           name="Transaction"
           list={TransactionList}
           edit={TransactionEdit}
           create={TransactionCreate}
           show={TransactionShow}
+        />
+        <Resource
+          name="Badge"
+          list={BadgeList}
+          edit={BadgeEdit}
+          create={BadgeCreate}
+          show={BadgeShow}
         />
         <Resource
           name="Venue"
@@ -85,6 +89,13 @@ const App = (): React.ReactElement => {
           edit={UserEdit}
           create={UserCreate}
           show={UserShow}
+        />
+        <Resource
+          name="UserFriend"
+          list={UserFriendList}
+          edit={UserFriendEdit}
+          create={UserFriendCreate}
+          show={UserFriendShow}
         />
       </Admin>
     </div>

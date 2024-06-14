@@ -17,7 +17,11 @@ import { Transaction } from "./Transaction";
 import { TransactionCountArgs } from "./TransactionCountArgs";
 import { TransactionFindManyArgs } from "./TransactionFindManyArgs";
 import { TransactionFindUniqueArgs } from "./TransactionFindUniqueArgs";
+import { CreateTransactionArgs } from "./CreateTransactionArgs";
+import { UpdateTransactionArgs } from "./UpdateTransactionArgs";
 import { DeleteTransactionArgs } from "./DeleteTransactionArgs";
+import { User } from "../../user/base/User";
+import { Venue } from "../../venue/base/Venue";
 import { TransactionService } from "../transaction.service";
 @graphql.Resolver(() => Transaction)
 export class TransactionResolverBase {
@@ -51,6 +55,63 @@ export class TransactionResolverBase {
   }
 
   @graphql.Mutation(() => Transaction)
+  async createTransaction(
+    @graphql.Args() args: CreateTransactionArgs
+  ): Promise<Transaction> {
+    return await this.service.createTransaction({
+      ...args,
+      data: {
+        ...args.data,
+
+        user: args.data.user
+          ? {
+              connect: args.data.user,
+            }
+          : undefined,
+
+        venue: args.data.venue
+          ? {
+              connect: args.data.venue,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Transaction)
+  async updateTransaction(
+    @graphql.Args() args: UpdateTransactionArgs
+  ): Promise<Transaction | null> {
+    try {
+      return await this.service.updateTransaction({
+        ...args,
+        data: {
+          ...args.data,
+
+          user: args.data.user
+            ? {
+                connect: args.data.user,
+              }
+            : undefined,
+
+          venue: args.data.venue
+            ? {
+                connect: args.data.venue,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Transaction)
   async deleteTransaction(
     @graphql.Args() args: DeleteTransactionArgs
   ): Promise<Transaction | null> {
@@ -64,5 +125,31 @@ export class TransactionResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => User, {
+    nullable: true,
+    name: "user",
+  })
+  async getUser(@graphql.Parent() parent: Transaction): Promise<User | null> {
+    const result = await this.service.getUser(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  @graphql.ResolveField(() => Venue, {
+    nullable: true,
+    name: "venue",
+  })
+  async getVenue(@graphql.Parent() parent: Transaction): Promise<Venue | null> {
+    const result = await this.service.getVenue(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

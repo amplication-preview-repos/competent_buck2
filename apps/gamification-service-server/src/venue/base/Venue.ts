@@ -11,11 +11,29 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import { Badge } from "../../badge/base/Badge";
+import {
+  ValidateNested,
+  IsOptional,
+  IsDate,
+  IsString,
+  IsEnum,
+} from "class-validator";
 import { Type } from "class-transformer";
+import { Transaction } from "../../transaction/base/Transaction";
+import { EnumVenueTypeField } from "./EnumVenueTypeField";
 
 @ObjectType()
 class Venue {
+  @ApiProperty({
+    required: false,
+    type: () => [Badge],
+  })
+  @ValidateNested()
+  @Type(() => Badge)
+  @IsOptional()
+  badges?: Array<Badge>;
+
   @ApiProperty({
     required: true,
   })
@@ -31,6 +49,48 @@ class Venue {
   @IsString()
   @Field(() => String)
   id!: string;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  location!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Transaction],
+  })
+  @ValidateNested()
+  @Type(() => Transaction)
+  @IsOptional()
+  transactions?: Array<Transaction>;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVenueTypeField,
+  })
+  @IsEnum(EnumVenueTypeField)
+  @IsOptional()
+  @Field(() => EnumVenueTypeField, {
+    nullable: true,
+  })
+  typeField?: "Option1" | null;
 
   @ApiProperty({
     required: true,

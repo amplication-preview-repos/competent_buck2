@@ -1,7 +1,7 @@
 import { Badge as TBadge } from "../api/badge/Badge";
 
-export const BADGE_TITLE_FIELD = "id";
+export const BADGE_TITLE_FIELD = "name";
 
 export const BadgeTitle = (record: TBadge): string => {
-  return record.id?.toString() || String(record.id);
+  return record.name?.toString() || String(record.id);
 };

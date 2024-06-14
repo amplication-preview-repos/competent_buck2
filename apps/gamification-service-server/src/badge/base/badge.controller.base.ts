@@ -29,11 +29,41 @@ export class BadgeControllerBase {
   @swagger.ApiCreatedResponse({ type: Badge })
   async createBadge(@common.Body() data: BadgeCreateInput): Promise<Badge> {
     return await this.service.createBadge({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+
+        venue: data.venue
+          ? {
+              connect: data.venue,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
+        description: true,
+        icon: true,
         id: true,
+        level: true,
+        name: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -47,8 +77,24 @@ export class BadgeControllerBase {
       ...args,
       select: {
         createdAt: true,
+        description: true,
+        icon: true,
         id: true,
+        level: true,
+        name: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -63,8 +109,24 @@ export class BadgeControllerBase {
       where: params,
       select: {
         createdAt: true,
+        description: true,
+        icon: true,
         id: true,
+        level: true,
+        name: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+
+        venue: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -85,11 +147,41 @@ export class BadgeControllerBase {
     try {
       return await this.service.updateBadge({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+
+          venue: data.venue
+            ? {
+                connect: data.venue,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
+          description: true,
+          icon: true,
           id: true,
+          level: true,
+          name: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
+
+          venue: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -113,8 +205,24 @@ export class BadgeControllerBase {
         where: params,
         select: {
           createdAt: true,
+          description: true,
+          icon: true,
           id: true,
+          level: true,
+          name: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
+
+          venue: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
